@@ -34,6 +34,9 @@ async function autoRepos(e) {
         try {
             try {
                 reposHeads = await fetch(`https://api.github.com/search/repositories?q=${userInput}`);
+                if (!(reposHeads.status == 200)) {
+                    throw new Error(reposHeads.status);
+                } 
                 response = await reposHeads.json();
             } catch(err) {
                 errorHere(err)
@@ -43,8 +46,8 @@ async function autoRepos(e) {
 
             reposArr = repos;
             return repos;
-        } catch (err) {
-            errorHere(err);
+        } catch {
+            console.log('Ошибка получения данных, поэтому дальнейшие вычисления не произошли');
         }
 
     }
@@ -53,12 +56,12 @@ async function autoRepos(e) {
 function errorHere(e) {
     const p = document.createElement('p');
     p.classList.add('p-error');
-    p.textContent = 'Возникла ошибка: ';
+    p.textContent = 'Возникла ошибка';
 
     const pError = document.createElement('p');
     pError.classList.add('p-error');
     pError.classList.add('p-error--message');
-    pError.textContent = e;
+    pError.textContent = `Статус ошибки: ${e.message}`;
 
     appendChild(search, p);
     appendChild(search, pError);
